@@ -1,0 +1,15 @@
+body {
+    margin: 0px;
+}
+
+header.titulo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+    background-color: rgb(124, 124, 124);
+}
+
+.barraLateral {
+    
+}

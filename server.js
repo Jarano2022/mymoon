@@ -4,7 +4,7 @@ const fs = require('fs');
 const app = express();
 
 const port = 3000;
-const host = '192.168.1.52';
+const host = 'localhost';
 
 app.use(express.static('wwwroot'));
 

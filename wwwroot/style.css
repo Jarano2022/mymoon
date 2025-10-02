@@ -16,6 +16,14 @@ header.titulo {
 }
 
 .paginaPrincipal img {
-    width: 50px;
-    height: auto;
+    display: flex;
+    align-items: center;
+    height: 10px;
+    width: auto;
+}
+.paginaPrincipal {
+    text-align: center;
+    justify-content: left;
+    width: auto;
+    height: 0px;
 }

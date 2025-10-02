@@ -11,5 +11,11 @@ header.titulo {
 }
 
 .barraLateral {
-    
+    height: 50px;
+    width: 100%;
+}
+
+.paginaPrincipal img {
+    width: 50px;
+    height: auto;
 }

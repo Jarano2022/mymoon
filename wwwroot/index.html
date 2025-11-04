@@ -1,31 +1,744 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <link
-      rel="icon"
-      href="assests/photos/logoMinimalistaTransparente.ico"
-      type="image/x-icon"
-    />
-    <link rel="stylesheet" href="style.css" />
-  <!-- React será proveído por Vite (paquetes npm) -->
-  </head>
+<html lang="es"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat App - Con Avatar Redondo y Tooltips</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-  <body>
-    <div class="barraLateral">
-      <div class="paginaPrincipal">
-        <a href="index.html">
-          <img src="assests/photos/logoMinimalistaTransparente.ico" />
-        </a>
-      </div>
+        body {
+            background-color: #f8f9fa;
+            display: flex;
+            height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
 
-      <nav class="apartados"></nav>
+        /* Panel lateral izquierdo fijo */
+        .sidebar {
+            width: 220px;
+            background: linear-gradient(135deg, #ff6b9d, #ff4d8d);
+            display: flex;
+            flex-direction: column;
+            padding: 25px 15px;
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+        }
 
-      <div class="iniciar sesión"></div>
+        .sidebar-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .app-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .app-subtitle {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        /* Avatar redondo en el sidebar */
+        .sidebar-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffffff, #f0f0f0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px auto;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .sidebar-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b9d, #ff4d8d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 28px;
+        }
+
+        /* Botones de navegación con tooltips */
+        .nav-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            padding: 14px 16px;
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 15px;
+            text-decoration: none;
+            position: relative;
+        }
+
+        .nav-btn:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateX(3px);
+        }
+
+        .nav-btn.active {
+            background-color: white;
+            color: #ff4d8d;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-text {
+            font-weight: 600;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #333;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+            z-index: 1000;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            right: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border-width: 6px;
+            border-style: solid;
+            border-color: transparent #333 transparent transparent;
+        }
+
+        .nav-btn:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            margin-left: 15px;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            text-align: center;
+            font-size: 11px;
+            opacity: 0.8;
+        }
+
+        /* Contenido principal */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            overflow-y: auto;
+            background-color: #f0f2f5;
+        }
+
+        .content-header {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .content-section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 19px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #ff4d8d;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title-icon {
+            margin-right: 10px;
+            font-size: 20px;
+        }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 18px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #fff5f8, #ffeef3);
+            margin-bottom: 18px;
+            border: 1px solid #ffd6e0;
+        }
+
+        .profile-avatar {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b9d, #ff4d8d);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 26px;
+            box-shadow: 0 3px 8px rgba(255, 107, 157, 0.3);
+            overflow: hidden;
+        }
+
+        .profile-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-weight: 700;
+            margin-bottom: 6px;
+            font-size: 17px;
+        }
+
+        .profile-status {
+            font-size: 13px;
+            color: #666;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #4CAF50;
+            margin-right: 8px;
+        }
+
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 14px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            position: relative;
+        }
+
+        .chat-item:hover {
+            background-color: #f8f8f8;
+            border-color: #ffd6e0;
+            transform: translateY(-1px);
+        }
+
+        .chat-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffb6c1, #ff8fa3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 14px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .chat-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .chat-info {
+            flex: 1;
+        }
+
+        .chat-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-time {
+            font-size: 11px;
+            color: #999;
+            font-weight: normal;
+        }
+
+        .chat-preview {
+            font-size: 13px;
+            color: #777;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .setting-item {
+            display: flex;
+            align-items: center;
+            padding: 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid #f0f0f0;
+            position: relative;
+        }
+
+        .setting-item:hover {
+            background-color: #fff5f8;
+            border-color: #ffd6e0;
+        }
+
+        .setting-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #fff5f8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 14px;
+            color: #ff4d8d;
+            font-size: 17px;
+        }
+
+        .setting-info {
+            flex: 1;
+        }
+
+        .setting-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        .setting-desc {
+            font-size: 12px;
+            color: #777;
+        }
+
+        /* Tooltips para elementos del contenido */
+        .chat-item .tooltip,
+        .setting-item .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            margin-bottom: 5px;
+            z-index: 1000;
+        }
+
+        .chat-item .tooltip::before,
+        .setting-item .tooltip::before {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+
+        .chat-item:hover .tooltip,
+        .setting-item:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                height: auto;
+                padding: 15px;
+            }
+            
+            .nav-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 8px;
+            }
+            
+            .nav-btn {
+                flex: 1;
+                min-width: 110px;
+                justify-content: center;
+                padding: 12px;
+            }
+            
+            .nav-text {
+                font-size: 13px;
+            }
+
+            .tooltip {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Panel lateral izquierdo fijo -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="app-title">ChatApp</div>
+            <div class="app-subtitle">Conectando personas</div>
+        </div>
+        
+        <!-- Avatar redondo -->
+        <div class="sidebar-avatar">
+            <div class="avatar-placeholder">TU</div>
+        </div>
+        
+        <!-- Botones de navegación con tooltips -->
+        <div class="nav-container">
+            <div class="nav-btn active" id="profile-btn">
+                <span class="nav-icon">👤</span>
+                <span class="nav-text">Mi Perfil</span>
+                <div class="tooltip">Ver y editar tu perfil</div>
+            </div>
+            <div class="nav-btn" id="messages-btn">
+                <span class="nav-icon">✉️</span>
+                <span class="nav-text">Mensajes</span>
+                <div class="tooltip">Mensajes del sistema y notificaciones</div>
+            </div>
+            <div class="nav-btn" id="general-btn">
+                <span class="nav-icon">💬</span>
+                <span class="nav-text">Chat General</span>
+                <div class="tooltip">Conversaciones con tus contactos</div>
+            </div>
+            <div class="nav-btn" id="settings-btn">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">Configuración</span>
+                <div class="tooltip">Ajustes y preferencias de la app</div>
+            </div>
+        </div>
+        
+        <div class="sidebar-footer">
+            ChatApp v2.0 • 2023
+        </div>
     </div>
 
-    <div id="root"></div>
+    <!-- Contenido principal -->
+    <div class="main-content">
+        <!-- Sección de Perfil -->
+        <div class="content-section" id="profile-section">
+            <div class="section-title">
+                <span class="section-title-icon">👤</span>
+                Mi Perfil
+            </div>
+            
+            <div class="profile-card">
+                <div class="profile-avatar">
+                    <div class="avatar-placeholder">TU</div>
+                </div>
+                <div class="profile-info">
+                    <div class="profile-name">Tu Nombre</div>
+                    <div class="profile-status">
+                        <span class="status-indicator"></span>
+                        En línea • Última vez hoy a las 10:30
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-list">
+                <div class="setting-item">
+                    <div class="setting-icon">📝</div>
+                    <div class="setting-info">
+                        <div class="setting-title">Información personal</div>
+                        <div class="setting-desc">Actualiza tu nombre, foto y estado</div>
+                    </div>
+                    <div class="tooltip">Editar datos personales</div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-icon">🔒</div>
+                    <div class="setting-info">
+                        <div class="setting-title">Privacidad</div>
+                        <div class="setting-desc">Controla quién puede ver tu información</div>
+                    </div>
+                    <div class="tooltip">Configurar privacidad</div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-icon">💳</div>
+                    <div class="setting-info">
+                        <div class="setting-title">Métodos de pago</div>
+                        <div class="setting-desc">Gestiona tus formas de pago</div>
+                    </div>
+                    <div class="tooltip">Administrar pagos</div>
+                </div>
+            </div>
+        </div>
 
-    <script src="script.js"></script>
-    <script type="module" src="/react/index.jsx"></script>
-  </body>
-</html>
+        <!-- Sección de Mensajes -->
+        <div class="content-section" id="messages-section" style="display: none;">
+            <div class="section-title">
+                <span class="section-title-icon">✉️</span>
+                Mensajes
+            </div>
+            
+            <div class="chat-list">
+                <div class="chat-item">
+                    <div class="chat-avatar">📢</div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            Anuncios del Sistema
+                            <span class="chat-time">10:30 AM</span>
+                        </div>
+                        <div class="chat-preview">Nueva actualización disponible para mejorar tu experiencia</div>
+                    </div>
+                    <div class="tooltip">Ver anuncio completo</div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar">⭐</div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            Promociones
+                            <span class="chat-time">09:15 AM</span>
+                        </div>
+                        <div class="chat-preview">Descuento especial del 20% en todos los planes premium</div>
+                    </div>
+                    <div class="tooltip">Ver promoción</div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar">🛡️</div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            Seguridad
+                            <span class="chat-time">Ayer</span>
+                        </div>
+                        <div class="chat-preview">Verificación de seguridad completada exitosamente</div>
+                    </div>
+                    <div class="tooltip">Detalles de seguridad</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Chat General -->
+        <div class="content-section" id="general-section" style="display: none;">
+            <div class="section-title">
+                <span class="section-title-icon">💬</span>
+                Chats Generales
+            </div>
+            
+            <div class="chat-list">
+                <div class="chat-item">
+                    <div class="chat-avatar">A</div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            Ana López
+                            <span class="chat-time">10:25 AM</span>
+                        </div>
+                        <div class="chat-preview">Hola, ¿cómo estás? ¿Quieres ir al cine esta tarde?</div>
+                    </div>
+                    <div class="tooltip">Abrir conversación con Ana</div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar">C</div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            Carlos Ruiz
+                            <span class="chat-time">09:45 AM</span>
+                        </div>
+                        <div class="chat-preview">Nos vemos mañana en la reunión, no olvides los documentos</div>
+                    </div>
+                    <div class="tooltip">Continuar chat con Carlos</div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar">M</div>
+                    <div class="chat-info">
+                        <div class="chat-name">
+                            María García
+                            <span class="chat-time">Ayer</span>
+                        </div>
+                        <div class="chat-preview">¿Viste el último mensaje que te envié? Es urgente</div>
+                    </div>
+                    <div class="tooltip">Responder a María</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección de Configuración -->
+        <div class="content-section" id="settings-section" style="display: none;">
+            <div class="section-title">
+                <span class="section-title-icon">⚙️</span>
+                Configuración
+            </div>
+            
+            <div class="settings-list">
+                <div class="setting-item">
+                    <div class="setting-icon">🔔</div>
+                    <div class="setting-info">
+                        <div class="setting-title">Notificaciones</div>
+                        <div class="setting-desc">Gestiona tus notificaciones y sonidos</div>
+                    </div>
+                    <div class="tooltip">Configurar alertas</div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-icon">💬</div>
+                    <div class="setting-info">
+                        <div class="setting-title">Chats</div>
+                        <div class="setting-desc">Tema, fondo de pantalla, historial</div>
+                    </div>
+                    <div class="tooltip">Personalizar chats</div>
+                </div>
+                
+                <div class="setting-item">
+                    <div class="setting-icon">📱</div>
+                    <div class="setting-info">
+                        <div class="setting-title">Almacenamiento y datos</div>
+                        <div class="setting-desc">Uso de red, descarga automática</div>
+                    </div>
+                    <div class="tooltip">Gestionar almacenamiento</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navegación entre secciones
+        const navButtons = document.querySelectorAll('.nav-btn');
+        const sections = {
+            'profile-btn': 'profile-section',
+            'messages-btn': 'messages-section',
+            'general-btn': 'general-section',
+            'settings-btn': 'settings-section'
+        };
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remover clase activa de todos los botones
+                navButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Añadir clase activa al botón clickeado
+                this.classList.add('active');
+                
+                // Ocultar todas las secciones
+                Object.values(sections).forEach(sectionId => {
+                    document.getElementById(sectionId).style.display = 'none';
+                });
+                
+                // Mostrar la sección correspondiente
+                const sectionId = sections[this.id];
+                document.getElementById(sectionId).style.display = 'block';
+            });
+        });
+
+        // Efecto adicional para los tooltips de los elementos del contenido
+        document.querySelectorAll('.chat-item, .setting-item').forEach(item => {
+            item.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-2px)';
+                this.style.boxShadow = '0 4px 8px rgba(0,0,0,0.1)';
+            });
+            
+            item.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+                this.style.boxShadow = 'none';
+            });
+        });
+    </script>
+
+</body></html>

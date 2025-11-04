@@ -4,7 +4,7 @@ const fs = require('fs');
 const app = express();
 
 const port = process.env.PORT || 3000;
-const host = 'localhost';
+const host = process.env.HOST || 'localhost';
 
 app.use(express.static('wwwroot'));
 

@@ -1,7 +1,8 @@
-<html lang="es"><head>
+<html lang="es">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App - Con Avatar Redondo y Tooltips</title>
+    <title>MyMoon</title>
     <style>
         * {
             margin: 0;
@@ -59,6 +60,24 @@
             border: 3px solid white;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .sidebar-avatar:hover::after {
+            content: '📷';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            border-radius: 50%;
         }
 
         .sidebar-avatar-img {
@@ -238,6 +257,24 @@
             font-size: 26px;
             box-shadow: 0 3px 8px rgba(255, 107, 157, 0.3);
             overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .profile-avatar:hover::after {
+            content: '📷';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            border-radius: 50%;
         }
 
         .profile-avatar-img {
@@ -255,6 +292,13 @@
             font-weight: 700;
             margin-bottom: 6px;
             font-size: 17px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-name:hover {
+            color: #ff4d8d;
         }
 
         .profile-status {
@@ -432,6 +476,133 @@
             margin-bottom: 10px;
         }
 
+        /* Modal para cambiar nombre y foto */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            width: 90%;
+            max-width: 450px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ff4d8d;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .close-btn:hover {
+            color: #ff4d8d;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            border-color: #ff4d8d;
+            outline: none;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background-color: #ff4d8d;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff2d7a;
+        }
+
+        .btn-secondary {
+            background-color: #f0f0f0;
+            color: #555;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+
+        /* Botón de cambiar foto separado */
+        .change-photo-btn {
+            background-color: #ff4d8d;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .change-photo-btn:hover {
+            background-color: #ff2d7a;
+        }
+
         /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
@@ -478,13 +649,13 @@
     <!-- Panel lateral izquierdo fijo -->
     <div class="sidebar">
         <div class="sidebar-header">
-            <div class="app-title">ChatApp</div>
-            <div class="app-subtitle">Conectando personas</div>
+            <div class="app-title">MyMoon</div>
+            <div class="app-subtitle" id="sidebar-name">Nombre</div>
         </div>
         
         <!-- Avatar redondo -->
-        <div class="sidebar-avatar">
-            <div class="avatar-placeholder">TU</div>
+        <div class="sidebar-avatar" id="sidebar-avatar">
+            <div class="avatar-placeholder" id="sidebar-avatar-placeholder">TU</div>
         </div>
         
         <!-- Botones de navegación con tooltips -->
@@ -512,7 +683,7 @@
         </div>
         
         <div class="sidebar-footer">
-            ChatApp v2.0 • 2023
+            MyMoon v1.0 • 2025
         </div>
     </div>
 
@@ -526,20 +697,21 @@
             </div>
             
             <div class="profile-card">
-                <div class="profile-avatar">
-                    <div class="avatar-placeholder">TU</div>
+                <div class="profile-avatar" id="profile-avatar">
+                    <div class="avatar-placeholder" id="profile-avatar-placeholder">TU</div>
                 </div>
                 <div class="profile-info">
-                    <div class="profile-name">Tu Nombre</div>
+                    <div class="profile-name" id="profile-name">Nombre</div>
                     <div class="profile-status">
                         <span class="status-indicator"></span>
-                        En línea • Última vez hoy a las 10:30
+                        En línea • Última vez hoy a las 00:00
                     </div>
+                    <button class="change-photo-btn" id="change-photo-btn">Cambiar foto de perfil</button>
                 </div>
             </div>
             
             <div class="settings-list">
-                <div class="setting-item">
+                <div class="setting-item" id="edit-profile-btn">
                     <div class="setting-icon">📝</div>
                     <div class="setting-info">
                         <div class="setting-title">Información personal</div>
@@ -560,7 +732,7 @@
                 <div class="setting-item">
                     <div class="setting-icon">💳</div>
                     <div class="setting-info">
-                        <div class="setting-title">Métodos de pago</div>
+                        <div class="setting-title">Métodos de premium</div>
                         <div class="setting-desc">Gestiona tus formas de pago</div>
                     </div>
                     <div class="tooltip">Administrar pagos</div>
@@ -626,8 +798,8 @@
                     <div class="chat-avatar">A</div>
                     <div class="chat-info">
                         <div class="chat-name">
-                            Ana López
-                            <span class="chat-time">10:25 AM</span>
+                            Nombre
+                            <span class="chat-time">tiempo</span>
                         </div>
                         <div class="chat-preview">Hola, ¿cómo estás? ¿Quieres ir al cine esta tarde?</div>
                     </div>
@@ -638,8 +810,8 @@
                     <div class="chat-avatar">C</div>
                     <div class="chat-info">
                         <div class="chat-name">
-                            Carlos Ruiz
-                            <span class="chat-time">09:45 AM</span>
+                            nombre
+                            <span class="chat-time">tiempo</span>
                         </div>
                         <div class="chat-preview">Nos vemos mañana en la reunión, no olvides los documentos</div>
                     </div>
@@ -650,7 +822,7 @@
                     <div class="chat-avatar">M</div>
                     <div class="chat-info">
                         <div class="chat-name">
-                            María García
+                            nombre
                             <span class="chat-time">Ayer</span>
                         </div>
                         <div class="chat-preview">¿Viste el último mensaje que te envié? Es urgente</div>
@@ -698,7 +870,102 @@
         </div>
     </div>
 
+    <!-- Modal para editar nombre -->
+    <div class="modal" id="edit-name-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">Cambiar Nombre</div>
+                <button class="close-btn" id="close-name-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="name-input">Nuevo nombre</label>
+                    <input type="text" class="form-input" id="name-input" placeholder="Ingresa tu nombre">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancel-name-btn">Cancelar</button>
+                <button class="btn btn-primary" id="save-name-btn">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Input oculto para seleccionar archivo -->
+    <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+
     <script>
+        // Variables globales
+        let userData = {
+            name: "Nombre",
+            avatar: null
+        };
+
+        // Cargar datos guardados al iniciar
+        function loadUserData() {
+            const savedData = localStorage.getItem('mymoon_user_data');
+            if (savedData) {
+                userData = JSON.parse(savedData);
+            }
+            updateUI();
+        }
+
+        // Guardar datos en localStorage
+        function saveUserData() {
+            localStorage.setItem('mymoon_user_data', JSON.stringify(userData));
+        }
+
+        // Actualizar la interfaz con los datos del usuario
+        function updateUI() {
+            // Actualizar nombre
+            document.getElementById('sidebar-name').textContent = userData.name;
+            document.getElementById('profile-name').textContent = userData.name;
+            
+            // Actualizar iniciales en los avatares
+            const initials = getInitials(userData.name);
+            document.getElementById('sidebar-avatar-placeholder').textContent = initials;
+            document.getElementById('profile-avatar-placeholder').textContent = initials;
+            
+            // Actualizar avatar si existe
+            if (userData.avatar) {
+                updateAvatar('sidebar-avatar', 'sidebar-avatar-placeholder', userData.avatar);
+                updateAvatar('profile-avatar', 'profile-avatar-placeholder', userData.avatar);
+            }
+        }
+
+        // Función para obtener iniciales del nombre
+        function getInitials(name) {
+            return name.split(' ')
+                .map(word => word.charAt(0).toUpperCase())
+                .join('')
+                .substring(0, 2);
+        }
+
+        // Función para actualizar avatar
+        function updateAvatar(avatarElementId, placeholderElementId, avatarSrc) {
+            const avatarElement = document.getElementById(avatarElementId);
+            const placeholderElement = document.getElementById(placeholderElementId);
+            
+            if (avatarSrc) {
+                // Si ya existe una imagen, la actualizamos
+                let img = avatarElement.querySelector('.sidebar-avatar-img') || 
+                          avatarElement.querySelector('.profile-avatar-img');
+                
+                if (img) {
+                    img.src = avatarSrc;
+                } else {
+                    // Si no existe, creamos una nueva imagen
+                    img = document.createElement('img');
+                    img.className = avatarElement.classList.contains('sidebar-avatar') ? 
+                                    'sidebar-avatar-img' : 'profile-avatar-img';
+                    img.src = avatarSrc;
+                    
+                    // Ocultamos el placeholder y mostramos la imagen
+                    placeholderElement.style.display = 'none';
+                    avatarElement.appendChild(img);
+                }
+            }
+        }
+
         // Navegación entre secciones
         const navButtons = document.querySelectorAll('.nav-btn');
         const sections = {
@@ -739,6 +1006,80 @@
                 this.style.boxShadow = 'none';
             });
         });
-    </script>
 
-</body></html>
+        // Funcionalidad para cambiar nombre y foto de perfil
+        const sidebarAvatar = document.getElementById('sidebar-avatar');
+        const profileAvatar = document.getElementById('profile-avatar');
+        const avatarInput = document.getElementById('avatar-input');
+        const editProfileBtn = document.getElementById('edit-profile-btn');
+        const changePhotoBtn = document.getElementById('change-photo-btn');
+        const profileName = document.getElementById('profile-name');
+        const editNameModal = document.getElementById('edit-name-modal');
+        const closeNameModalBtn = document.getElementById('close-name-modal');
+        const cancelNameBtn = document.getElementById('cancel-name-btn');
+        const saveNameBtn = document.getElementById('save-name-btn');
+        const nameInput = document.getElementById('name-input');
+
+        // Abrir modal para editar nombre
+        profileName.addEventListener('click', function() {
+            nameInput.value = userData.name;
+            editNameModal.style.display = 'flex';
+        });
+
+        editProfileBtn.addEventListener('click', function() {
+            nameInput.value = userData.name;
+            editNameModal.style.display = 'flex';
+        });
+
+        // Cerrar modal de nombre
+        function closeNameModal() {
+            editNameModal.style.display = 'none';
+        }
+
+        closeNameModalBtn.addEventListener('click', closeNameModal);
+        cancelNameBtn.addEventListener('click', closeNameModal);
+
+        // Guardar cambios de nombre
+        saveNameBtn.addEventListener('click', function() {
+            if (nameInput.value.trim() !== '') {
+                userData.name = nameInput.value.trim();
+                saveUserData();
+                updateUI();
+            }
+            closeNameModal();
+        });
+
+        // Cambiar avatar haciendo clic en los avatares o en el botón
+        sidebarAvatar.addEventListener('click', function() {
+            avatarInput.click();
+        });
+
+        profileAvatar.addEventListener('click', function() {
+            avatarInput.click();
+        });
+
+        changePhotoBtn.addEventListener('click', function() {
+            avatarInput.click();
+        });
+
+        // Procesar archivo seleccionado
+        avatarInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    userData.avatar = e.target.result;
+                    saveUserData();
+                    updateUI();
+                };
+                
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Cargar datos al iniciar la página
+        document.addEventListener('DOMContentLoaded', loadUserData);
+    </script>
+</body>
+</html>
